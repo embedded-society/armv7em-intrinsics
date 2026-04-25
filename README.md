@@ -56,10 +56,6 @@ This library is a **superset** of ARMv7-M (which is itself a superset of ARMv6-M
 
 > **Note:** `dsp.hpp` exposes a representative subset of the ~70 DSP instructions in the ARMv7E-M ISA (the highest-leverage ones for FIR/IIR filtering, lane-wise saturation, and packed arithmetic). The remaining DSP instructions (the rest of the `S*ADD/SUB/ASX/SAX/HASX/HSAX/USAD/USADA/PKHBT/PKHTB/SXTB16/UXTB16/SXTAB16/UXTAB16` family, the long-accumulate variants `SMLALD`, `SMLSLD`, the `*X` cross variants, `SMMUL/SMMLA/SMMLS`, …) are **not yet covered** — add as needed.
 
-## Compatibility
-
-Designed to be a drop-in replacement for the ARMv7E-M-relevant subset of the deprecated `ARMCortexM-CppLib::intrinsics` headers. Function names and signatures follow the existing `asmFoo()` convention.
-
 ## Licence
 
 This project is licensed under the Apache License Version 2.0.  
