@@ -4,9 +4,6 @@ Header-only C++20 wrappers for ARMv7E-M instructions that are not normally emitt
 
 Targets the **ARMv7E-M** instruction set: Cortex-M4 with the DSP extension.
 
-For ARMv6-M (Cortex-M0/M0+/M1), see [armv6m-intrinsics](https://github.com/embedded-society/armv6m-intrinsics).
-For ARMv7-M (Cortex-M3, no DSP), see [armv7m-intrinsics](https://github.com/embedded-society/armv7m-intrinsics).
-
 ## Usage
 
 Copy the library into your project (e.g., into `lib/`) and add it via CMake:
@@ -27,11 +24,7 @@ uint32_t fir_step(uint32_t samples_packed, uint32_t coeffs_packed, uint32_t acc)
 }
 ```
 
-CMake is optional — every header is self-contained, so you can drop the `include/` directory anywhere on your include path and `#include` directly without using CMake at all.
-
 ## Contents
-
-All wrappers live in the `ArmCortex` namespace and are `[[gnu::always_inline]] static inline` so the compiler inlines them straight into the call site without function-call overhead.
 
 | File | Instructions | Notes |
 |------|--------------|-------|
