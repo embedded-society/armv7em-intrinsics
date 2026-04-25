@@ -1,0 +1,67 @@
+# armv7em-intrinsics
+
+Header-only C++20 wrappers for ARMv7E-M instructions that are not normally emitted by a C/C++ compiler — including the DSP extension SIMD/MAC instructions.
+
+Targets the **ARMv7E-M** instruction set: Cortex-M4 with the DSP extension.
+
+For ARMv6-M (Cortex-M0/M0+/M1), see [armv6m-intrinsics](https://github.com/embedded-society/armv6m-intrinsics).
+For ARMv7-M (Cortex-M3, no DSP), see [armv7m-intrinsics](https://github.com/embedded-society/armv7m-intrinsics).
+
+## Usage
+
+Copy the library into your project (e.g., into `lib/`) and add it via CMake:
+
+```cmake
+add_subdirectory(lib/armv7em-intrinsics)
+target_link_libraries(your_target PRIVATE armv7em-intrinsics)
+```
+
+Then include what you need:
+
+```cpp
+#include <armv7em-intrinsics/dsp.hpp>
+
+// FIR tap pair: two 16-bit samples × two 16-bit coefficients, single-cycle MAC
+uint32_t fir_step(uint32_t samples_packed, uint32_t coeffs_packed, uint32_t acc) {
+    return ArmCortex::asmSmlad(samples_packed, coeffs_packed, acc);
+}
+```
+
+CMake is optional — every header is self-contained, so you can drop the `include/` directory anywhere on your include path and `#include` directly without using CMake at all.
+
+## Contents
+
+All wrappers live in the `ArmCortex` namespace and are `[[gnu::always_inline]] static inline` so the compiler inlines them straight into the call site without function-call overhead.
+
+This library is a **superset** of ARMv7-M (which is itself a superset of ARMv6-M). Every Cortex-M3 intrinsic is available here, plus DSP instructions exclusive to Cortex-M4.
+
+### Inherited from ARMv6-M / ARMv7-M
+
+| File | Instructions |
+|------|--------------|
+| `hints.hpp` | `NOP`, `YIELD`, `WFI`, `WFE`, `SEV`, `BKPT<imm>` |
+| `barriers.hpp` | `DSB`, `DMB`, `ISB` |
+| `interrupts.hpp` | `CPSIE i/f`, `CPSID i/f` (PRIMASK and FAULTMASK) |
+| `svc.hpp` | `SVC<imm>` |
+| `reverse.hpp` | `REV`, `REV16`, `REVSH` |
+| `bits.hpp` | `CLZ`, `RBIT` |
+| `exclusive.hpp` | `LDREX(B/H)`, `STREX(B/H)`, `CLREX` |
+| `saturation.hpp` | `SSAT<sat>`, `USAT<sat>` |
+
+### Added in ARMv7E-M (DSP extension)
+
+| File | Instructions | Notes |
+|------|--------------|-------|
+| `dsp.hpp` | `QADD`, `QSUB`, `SADD16`, `QADD16`, `SSUB16`, `QSUB16`, `SADD8`, `QADD8`, `SSUB8`, `QSUB8`, `SEL`, `SMUAD`, `SMUSD`, `SMLAD`, `SMLSD` | Saturating arithmetic + packed-SIMD add/sub + dual 16×16 MAC |
+
+> **Note:** `dsp.hpp` exposes a representative subset of the ~70 DSP instructions in the ARMv7E-M ISA (the highest-leverage ones for FIR/IIR filtering, lane-wise saturation, and packed arithmetic). The remaining DSP instructions (the rest of the `S*ADD/SUB/ASX/SAX/HASX/HSAX/USAD/USADA/PKHBT/PKHTB/SXTB16/UXTB16/SXTAB16/UXTAB16` family, the long-accumulate variants `SMLALD`, `SMLSLD`, the `*X` cross variants, `SMMUL/SMMLA/SMMLS`, …) are **not yet covered** — add as needed.
+
+## Compatibility
+
+Designed to be a drop-in replacement for the ARMv7E-M-relevant subset of the deprecated `ARMCortexM-CppLib::intrinsics` headers. Function names and signatures follow the existing `asmFoo()` convention.
+
+## Licence
+
+This project is licensed under the Apache License Version 2.0.  
+Copyright (C) 2026 The Embedded Society <https://github.com/embedded-society/armv7em-intrinsics>.  
+See the attached [LICENCE](./LICENCE) file for more info.
