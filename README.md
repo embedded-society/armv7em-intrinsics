@@ -33,25 +33,16 @@ CMake is optional — every header is self-contained, so you can drop the `inclu
 
 All wrappers live in the `ArmCortex` namespace and are `[[gnu::always_inline]] static inline` so the compiler inlines them straight into the call site without function-call overhead.
 
-This library is a **superset** of ARMv7-M (which is itself a superset of ARMv6-M). Every Cortex-M3 intrinsic is available here, plus DSP instructions exclusive to Cortex-M4.
-
-### Inherited from ARMv6-M / ARMv7-M
-
-| File | Instructions |
-|------|--------------|
-| `hints.hpp` | `NOP`, `YIELD`, `WFI`, `WFE`, `SEV`, `BKPT<imm>` |
-| `barriers.hpp` | `DSB`, `DMB`, `ISB` |
-| `interrupts.hpp` | `CPSIE i/f`, `CPSID i/f` (PRIMASK and FAULTMASK) |
-| `svc.hpp` | `SVC<imm>` |
-| `reverse.hpp` | `REV`, `REV16`, `REVSH` |
-| `bits.hpp` | `CLZ`, `RBIT` |
-| `exclusive.hpp` | `LDREX(B/H)`, `STREX(B/H)`, `CLREX` |
-| `saturation.hpp` | `SSAT<sat>`, `USAT<sat>` |
-
-### Added in ARMv7E-M (DSP extension)
-
 | File | Instructions | Notes |
 |------|--------------|-------|
+| `hints.hpp` | `NOP`, `YIELD`, `WFI`, `WFE`, `SEV`, `BKPT<imm>` | Hint-class instructions; `BKPT` takes an 8-bit immediate identifier |
+| `barriers.hpp` | `DSB`, `DMB`, `ISB` | Memory and instruction synchronisation barriers (full system domain) |
+| `interrupts.hpp` | `CPSIE i/f`, `CPSID i/f` | Enable/disable maskable exceptions (PRIMASK) and faults (FAULTMASK) |
+| `svc.hpp` | `SVC<imm>` | Supervisor call with 8-bit immediate (template-encoded) |
+| `reverse.hpp` | `REV`, `REV16`, `REVSH` | Byte-order reversal of word, halfword pairs, and signed lower halfword |
+| `bits.hpp` | `CLZ`, `RBIT` | Count leading zeros, reverse bits |
+| `exclusive.hpp` | `LDREX`, `LDREXH`, `LDREXB`, `STREX`, `STREXH`, `STREXB`, `CLREX` | Load/store-exclusive primitives for lock-free atomics |
+| `saturation.hpp` | `SSAT<sat>`, `USAT<sat>` | Signed/unsigned saturation to `sat` bits (template-encoded) |
 | `dsp.hpp` | `QADD`, `QSUB`, `SADD16`, `QADD16`, `SSUB16`, `QSUB16`, `SADD8`, `QADD8`, `SSUB8`, `QSUB8`, `SEL`, `SMUAD`, `SMUSD`, `SMLAD`, `SMLSD` | Saturating arithmetic + packed-SIMD add/sub + dual 16×16 MAC |
 
 > **Note:** `dsp.hpp` exposes a representative subset of the ~70 DSP instructions in the ARMv7E-M ISA (the highest-leverage ones for FIR/IIR filtering, lane-wise saturation, and packed arithmetic). The remaining DSP instructions (the rest of the `S*ADD/SUB/ASX/SAX/HASX/HSAX/USAD/USADA/PKHBT/PKHTB/SXTB16/UXTB16/SXTAB16/UXTAB16` family, the long-accumulate variants `SMLALD`, `SMLSLD`, the `*X` cross variants, `SMMUL/SMMLA/SMMLS`, …) are **not yet covered** — add as needed.
